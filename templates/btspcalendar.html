@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+ 
+    table {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      text-transform: uppercase;
+      width: 100%;
+     
+      
+      }
+     th.month{
+      display:none;
+     }
+   
+     th, td {
+      padding-bottom: 8%;
+    }
+     
+
+
+
+     
+
+</style>
+
+<script>
+
+  function prevOrNextMonth(clicked_id)
+  {
+    
+    //CREATE HTTP REQUEST
+    httpRequest = new XMLHttpRequest();
+    httpRequest.open('POST', 'prevOrNextMonth' , true);
+    httpRequest.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    httpRequest.setRequestHeader("Content-type", "application/json");
+
+    //get current month
+    var current_month=document.getElementById("month").innerText
+    //get current year
+    var current_year=document.getElementById("year").innerText
+    
+    //get value of button , nextbutton : next month , prevbutton : previous button
+    var value=clicked_id
+
+     
+    //CREATE SENDING VARIABLE
+    var senddata= {"value":value,"current_month":current_month, "current_year":current_year}
+
+    //SEND  DATA
+    httpRequest.send(JSON.stringify(senddata));
+
+
+    httpRequest.onreadystatechange=function(){  
+      if(httpRequest.readyState==4)
+      {
+      
+        if(httpRequest.status==200)
+        {
+          html_content=JSON.parse(httpRequest.response)
+          //assigning new values
+          document.getElementById("year").innerHTML=html_content.year;
+          document.getElementById("month").innerHTML=html_content.month;
+          document.getElementById("tablepass").innerHTML=html_content.calend;
+
+        }
+        else
+        {
+            alert("Error")
+        }
+
+
+      }
+    }
+
+
+
+
+      
+  }
+
+  function gotoDate(clicked_id){
+
+     //CREATE HTTP REQUEST
+     httpRequest = new XMLHttpRequest();
+     httpRequest.open('POST', 'prevOrNextMonth' , true);
+     httpRequest.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+     httpRequest.setRequestHeader("Content-type", "application/json");
+ 
+     //get current month
+		 var current_month = $('#gotomonth option:selected').text();
+
+     console.log(current_month)
+
+     //get current year
+		 var current_year = $('#gotoyear option:selected').text();
+
+     console.log(current_year)
+     
+     //get value of button , nextbutton : next month , prevbutton : previous button
+     var value=clicked_id
+ 
+      
+     //CREATE SENDING VARIABLE
+     var senddata= {"value":value,"current_month":current_month, "current_year":current_year}
+ 
+     //SEND  DATA
+     httpRequest.send(JSON.stringify(senddata));
+ 
+ 
+     httpRequest.onreadystatechange=function(){  
+       if(httpRequest.readyState==4)
+       {
+       
+         if(httpRequest.status==200)
+         {
+           html_content=JSON.parse(httpRequest.response)
+           //assigning new values
+           document.getElementById("year").innerHTML=html_content.year;
+           document.getElementById("month").innerHTML=html_content.month;
+           document.getElementById("tablepass").innerHTML=html_content.calend;
+ 
+         }
+         else
+         {
+             alert("Error")
+         }
+ 
+ 
+       }
+     }
+
+
+
+  }
+
+
+    
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+<div class="container mt-5 " style="color: white;">
+  <center>
+  <h1 style="font-size:3rem; font-weight:200 ; font-family: 'Poppins', sans-serif;" class="display-4">Simple Calendar</h1>
+  <h5 style="font-style:italic; font-weight:300; font-size:1rem; font-family: 'Poppins', sans-serif;" class="">A nicely-designed Bootstrap calendar. Made with Bootstrap,Django,JavaScript</h5>
+  <a href="https://www.shamshadlive.com"  style=' color:white;'>
+  <h5 style="font-style:italic; font-size:1rem; font-weight:300 ; font-family: 'Poppins', sans-serif;" class="display-5">
+    Created By Shamshad</h5>
+    </a> 
+  </center>
+</div>
+ 
+<div class="container rounded mt-5" style="background-color: white;">
+
+  <div class="d-flex align-items-center pt-4 ps-4" >
+
+    <div class="d-flex justify-content-start col-6">
+
+    <i class="bi bi-calendar3 fs-1 mr-3"></i>
+    <H1 class="font-weight-bold mb-0 ms-2 text-uppercase" style="font-style:bold; font-weight:600; font-size:3rem; font-family: 'Poppins', sans-serif;"> 
+      <span id="month">{{current_month}}</span>
+      <span id="year">{{current_year}}</span></H1>
+    </div>
+
+
+    <div class="ms-3 col-6 d-flex justify-content-end">
+
+        <!-- Previous Button -->
+       
+          <button id="prevbutton" name="prev" onClick="prevOrNextMonth(this.id)" style="border: none; background: none;">
+            <i class="fs-2  bi bi-arrow-left-circle btn btn-light"></i>
+          </button>
+
+
+        <!-- NExt Button -->
+       
+           <button id="nextbutton" class="m-2"  name="next" onClick="prevOrNextMonth(this.id)" style="border: none; background: none;">
+            <i class="fs-2  bi bi-arrow-right-circle btn btn-light"></i>
+          </button>
+          
+       
+             
+    </div>
+
+
+
+   
+
+  </div>
+
+ 
+
+
+
+
+
+
+
+
+  
+  <div>
+    <H1 class="ps-4 mb-4" style="font-style:italic; font-weight:300; font-size:0.9rem; font-family: 'Poppins', sans-serif; color:gray;">No Events For Today</H1>
+  </div>
+
+      <div id= "tablepass" class="container d-flex justify-content-center">
+
+
+          {{calend|safe}}
+
+    
+
+      
+
+        </div>
+  
+  <!-- gotoDate Area -->
+  </div>
+
+
+ <center>
+
+
+   <div class="container ml-2 mt-2 mb-2 ">
+      
+            
+               <select  class="btn btn-dark" name="month" id="gotomonth">
+                  <option value="{{current_month}}" selected  hidden>{{current_month}}</option>
+                  {% for month in months|slice:"1:" %}
+                  <option value="{{month}}">{{month}}</option>
+                  {% endfor %}  
+               </select>
+                  <select class="btn btn-dark"  name="year" id="gotoyear">
+                      <option value="{{current_year}}" selected>{{current_year}}</option>
+                       {% for year in range|slice:"1995:2051" %}
+                      <option value="{{year}}">{{year}}</option>
+                      {% endfor %}
+                  </select>
+    
+    <input  type="submit" class="btn btn-dark"  id="gotoButton"  onClick="gotoDate(this.id)"    value="Go">
+  
+
+
+   </div>
+
+
+  
+  </center>
+
+
+
+
+
+  {% endblock content %}
+
+
