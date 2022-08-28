@@ -12,3 +12,5 @@ This is made with bootstrap and its dynamic
 
 Also you can easily edit the range.
 
+
+#In Settings.py Please Add Your Django Secret Key
